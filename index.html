@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LKPD Interaktif IPA - Sistem Hormon Manusia (MTsN 1 Kota Malang)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f0fdf4;
+        }
+
+        /* Styling custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #10b981;
+            border-radius: 4px;
+        }
+
+        /* Print Specific Styles for crisp PDF export */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                font-size: 11pt;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+            .card-box {
+                border: 1px solid #cbd5e1 !important;
+                box-shadow: none !important;
+                break-inside: avoid;
+            }
+            .interactive-input {
+                border: none !important;
+                border-bottom: 1px solid #000 !important;
+                background: transparent !important;
+            }
+        }
+
+        .print-only {
+            display: none;
+        }
+
+        /* Pulse animation for interactive organ nodes */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 0.4; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+        .pulse-node {
+            animation: pulse-ring 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Top Action Bar (No-Print) -->
+    <header class="no-print bg-emerald-800 text-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-xl shadow">
+                    <i class="fas fa-microscope text-white"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-sm sm:text-base leading-tight">LKPD INTERAKTIF IPA</h1>
+                    <p class="text-xs text-emerald-200">MTsN 1 Kota Malang • Kelas IX Genap</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button onclick="window.print()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold px-4 py-1.5 rounded-lg text-xs sm:text-sm transition flex items-center gap-1.5 shadow">
+                    <i class="fas fa-file-pdf"></i> Download PDF / Cetak
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-6xl mx-auto px-4 py-6 w-full flex-grow">
+
+        <!-- Header Informasi LKPD -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-emerald-100 mb-6 card-box">
+            <div class="border-b-2 border-emerald-800 pb-3 mb-4">
+                <p class="font-bold text-slate-800 text-base">Sistem Hormon Manusia</p>
+            </div>
+
+            <!-- Identity & Metadata Section -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-emerald-50/60 p-4 rounded-xl border border-emerald-100">
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2">
+                        <label class="w-24 text-xs font-bold text-slate-700">Nama Siswa</label>
+                        <span class="text-slate-400">:</span>
+                        <input type="text" id="studentName" oninput="updatePrintSummary()" placeholder="Ketik nama lengkap..." class="interactive-input flex-1 bg-white border border-slate-300 rounded-md px-2.5 py-1 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label class="w-24 text-xs font-bold text-slate-700">Kelas</label>
+                        <span class="text-slate-400">:</span>
+                        <select id="studentClass" onchange="updatePrintSummary()" class="interactive-input flex-1 bg-white border border-slate-300 rounded-md px-2.5 py-1 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <option value="">-- Pilih Kelas --</option>
+                            <option value="IX A">IX A</option>
+                            <option value="IX B">IX B</option>
+                            <option value="IX C">IX C</option>
+                            <option value="IX D">IX D</option>
+                            <option value="IX E">IX E</option>
+                            <option value="IX F">IX F</option>
+                            <option value="IX G">IX G</option>
+                            <option value="IX H">IX H</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label class="w-24 text-xs font-bold text-slate-700">No. Absen</label>
+                        <span class="text-slate-400">:</span>
+                        <input type="number" id="studentAbsen" oninput="updatePrintSummary()" placeholder="Contoh: 15" class="interactive-input w-24 bg-white border border-slate-300 rounded-md px-2.5 py-1 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        <label class="text-xs font-bold text-slate-700 ml-2">Kelompok:</label>
+                        <input type="text" id="studentGroup" oninput="updatePrintSummary()" placeholder="Nama kelompok" class="interactive-input flex-1 bg-white border border-slate-300 rounded-md px-2.5 py-1 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                </div>
+                <div class="space-y-1.5 border-t md:border-t-0 md:border-l border-slate-200 md:pl-4 pt-2 md:pt-0 text-xs text-slate-600">
+                    <p class="font-bold text-emerald-900 flex items-center gap-1">
+                        <i class="fas fa-user-tie text-emerald-600"></i> Penyusun LKPD:
+                    </p>
+                    <p class="font-semibold text-slate-800 pl-5">Mohamad Kholish Widodo, S.Pd., M.Pd.</p>
+                    <p class="text-slate-500 pl-5">NIP. Guru Pengampu IPA MTsN 1 Kota Malang</p>
+                    <div class="mt-2 pt-2 border-t border-slate-200 flex justify-between items-center">
+                        <span>Tanggal Pelaksanaan:</span>
+                        <input type="date" id="taskDate" onchange="updatePrintSummary()" class="bg-white border border-slate-300 rounded px-2 py-0.5 text-xs">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Competency & Instructions -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-emerald-100 mb-6 card-box">
+            <h3 class="text-base font-bold text-emerald-900 mb-2 flex items-center gap-2">
+                <i class="fas fa-bullseye text-emerald-600"></i> Tujuan Pembelajaran & Petunjuk Pengerjaan
+            </h3>
+            <div class="grid md:grid-cols-2 gap-4 text-xs text-slate-700">
+                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                    <p class="font-bold text-slate-800 mb-1">Tujuan Pembelajaran:</p>
+                    <ul class="list-disc list-inside space-y-1 text-slate-600">
+                        <li>Peserta didik dapat mengidentifikasi letak dan nama kelenjar endokrin utama pada tubuh manusia.</li>
+                        <li>Peserta didik dapat menganalisis fungsi hormon yang dihasilkan oleh masing-masing kelenjar.</li>
+                        <li>Peserta didik dapat mengorelasikan gangguan/kelainan fungsi hormon dengan kasus kehidupan nyata.</li>
+                    </ul>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                    <p class="font-bold text-slate-800 mb-1">Langkah Kerja LKPD Interaktif:</p>
+                    <ol class="list-decimal list-inside space-y-1 text-slate-600">
+                        <li>Isi identitas diri secara lengkap pada kolom di atas.</li>
+                        <li>Pelajari materi visual interaktif peta kelenjar hormon manusia.</li>
+                        <li>Kerjakan Aktivitas 1, Aktivitas 2, dan Evaluasi secara mandiri/kelompok. Nilai akan terhitung otomatis saat dikerjakan.</li>
+                        <li>Klik <b>"Download PDF / Cetak"</b> untuk menyimpan bukti hasil kerja.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Material Section -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-emerald-100 mb-6 card-box">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-base font-bold text-emerald-900 flex items-center gap-2">
+                    <i class="fas fa-brain text-emerald-600"></i> Pengenalan Visual: Kelenjar Endokrin Manusia
+                </h3>
+                <span class="text-xs bg-emerald-100 text-emerald-800 font-medium px-2.5 py-1 rounded-full no-print">Klik titik kelenjar untuk info</span>
+            </div>
+
+            <div class="grid md:grid-cols-12 gap-6 items-center">
+                <!-- Interactive SVG Human Body Diagram -->
+                <div class="md:col-span-5 flex justify-center relative bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div class="relative w-64 h-80 flex items-center justify-center">
+                        <!-- Stylized Body Silhouette SVG -->
+                        <svg class="w-full h-full text-slate-300" viewBox="0 0 200 400" fill="currentColor">
+                            <!-- Head & Neck -->
+                            <circle cx="100" cy="50" r="30" />
+                            <rect x="90" y="75" width="20" height="25" rx="5" />
+                            <!-- Torso -->
+                            <path d="M 60 100 L 140 100 L 130 260 L 70 260 Z" />
+                            <!-- Arms -->
+                            <rect x="35" y="105" width="20" height="120" rx="8" />
+                            <rect x="145" y="105" width="20" height="120" rx="8" />
+                            <!-- Legs -->
+                            <rect x="72" y="265" width="22" height="120" rx="8" />
+                            <rect x="106" y="265" width="22" height="120" rx="8" />
+                        </svg>
+
+                        <!-- Interactive Nodes overlay on SVG -->
+                        <!-- 1. Hipofisis / Pituitari (Brain) -->
+                        <button onclick="showOrganInfo('hipofisis')" class="absolute top-10 left-1/2 -translate-x-1/2 w-6 h-6 bg-purple-600 rounded-full text-white font-bold text-xs flex items-center justify-center shadow-lg hover:scale-125 transition pulse-node" title="Kelenjar Hipofisis">
+                            1
+                        </button>
+
+                        <!-- 2. Tiroid (Neck) -->
+                        <button onclick="showOrganInfo('tiroid')" class="absolute top-20 left-1/2 -translate-x-1/2 w-6 h-6 bg-blue-600 rounded-full text-white font-bold text-xs flex items-center justify-center shadow-lg hover:scale-125 transition pulse-node" title="Kelenjar Tiroid">
+                            2
+                        </button>
+
+                        <!-- 3. Adrenal (Above kidneys) -->
+                        <button onclick="showOrganInfo('adrenal')" class="absolute top-36 left-1/2 -translate-x-1/2 w-6 h-6 bg-amber-500 rounded-full text-white font-bold text-xs flex items-center justify-center shadow-lg hover:scale-125 transition pulse-node" title="Kelenjar Adrenal">
+                            3
+                        </button>
+
+                        <!-- 4. Pankreas (Abdomen) -->
+                        <button onclick="showOrganInfo('pankreas')" class="absolute top-44 left-1/2 -translate-x-1/2 w-6 h-6 bg-emerald-600 rounded-full text-white font-bold text-xs flex items-center justify-center shadow-lg hover:scale-125 transition pulse-node" title="Kelenjar Pankreas">
+                            4
+                        </button>
+
+                        <!-- 5. Ovarium / Testis (Gonad) -->
+                        <button onclick="showOrganInfo('gonad')" class="absolute top-60 left-1/2 -translate-x-1/2 w-6 h-6 bg-rose-600 rounded-full text-white font-bold text-xs flex items-center justify-center shadow-lg hover:scale-125 transition pulse-node" title="Kelenjar Kelamin (Gonad)">
+                            5
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Info Display Panel -->
+                <div class="md:col-span-7">
+                    <div id="organDetailCard" class="bg-emerald-50/80 border border-emerald-200 rounded-xl p-5 min-h-[240px] flex flex-col justify-center">
+                        <div class="flex items-center gap-2 text-emerald-800 font-bold text-base mb-2">
+                            <i class="fas fa-info-circle text-emerald-600"></i>
+                            <h4 id="organTitle">Petunjuk Interaktif</h4>
+                        </div>
+                        <p id="organDesc" class="text-sm text-slate-600 leading-relaxed">
+                            Klik angka 1 - 5 pada diagram anatomi di samping untuk mempelajari struktur kelenjar endokrin, hormon utama yang dihasilkan, serta peran intinya dalam menjaga keseimbangan tubuh (Homeostasis).
+                        </p>
+                        <div id="organMeta" class="mt-4 grid grid-cols-2 gap-2 text-xs font-semibold hidden">
+                            <div class="bg-white p-2 rounded border border-emerald-200">
+                                <span class="text-slate-400 block">Hormon Utama:</span>
+                                <span id="organHormone" class="text-emerald-900 font-bold">-</span>
+                            </div>
+                            <div class="bg-white p-2 rounded border border-emerald-200">
+                                <span class="text-slate-400 block">Fungsi Utama:</span>
+                                <span id="organFunction" class="text-emerald-900 font-bold">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AKTIVITAS 1: Menjodohkan Kelenjar, Hormon & Fungsi -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-emerald-100 mb-6 card-box">
+            <div class="border-b border-slate-200 pb-3 mb-4 flex justify-between items-center">
+                <div>
+                    <span class="bg-emerald-100 text-emerald-800 font-extrabold text-xs px-2.5 py-1 rounded-md uppercase">Aktivitas 1</span>
+                    <h3 class="text-base font-bold text-slate-800 mt-1">Pasangkan Kelenjar dengan Hormon dan Fungsi yang Tepat</h3>
+                </div>
+                <div id="act1Score" class="text-xs font-bold bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-200">
+                    Skor: - / 20
+                </div>
+            </div>
+            <p class="text-xs text-slate-600 mb-4">Pilihlah nama hormon dan fungsi utama yang sesuai pada setiap kelenjar endokrin di bawah ini!</p>
+
+            <div class="space-y-3 text-xs sm:text-sm">
+                <!-- Matching Row 1 -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                    <div class="md:col-span-3 font-bold text-emerald-900 flex items-center gap-2">
+                        <span class="w-6 h-6 bg-emerald-700 text-white rounded-full flex items-center justify-center text-xs">1</span>
+                        Kelenjar Tiroid
+                    </div>
+                    <div class="md:col-span-4">
+                        <select id="act1_h1" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-emerald-500">
+                            <option value="">-- Pilih Hormon --</option>
+                            <option value="tiroksin">Tiroksin</option>
+                            <option value="insulin">Insulin</option>
+                            <option value="adrenalin">Adrenalin</option>
+                            <option value="estrogen">Estrogen</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-5">
+                        <select id="act1_f1" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-emerald-500">
+                            <option value="">-- Pilih Fungsi Utama --</option>
+                            <option value="f_metabolisme">Mengatur laju metabolisme sel & kecepatan pembakaran energi tubuh</option>
+                            <option value="f_gula">Menurunkan kadar gula darah dengan mengubah glukosa jadi glikogen</option>
+                            <option value="f_stres">Meningkatkan denyut jantung dan tekanan darah saat kondisi darurat/stres</option>
+                            <option value="f_kelamin">Mempengaruhi perkembangan ciri kelamin sekunder wanita</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Matching Row 2 -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                    <div class="md:col-span-3 font-bold text-emerald-900 flex items-center gap-2">
+                        <span class="w-6 h-6 bg-emerald-700 text-white rounded-full flex items-center justify-center text-xs">2</span>
+                        Kelenjar Pankreas
+                    </div>
+                    <div class="md:col-span-4">
+                        <select id="act1_h2" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-emerald-500">
+                            <option value="">-- Pilih Hormon --</option>
+                            <option value="tiroksin">Tiroksin</option>
+                            <option value="insulin">Insulin</option>
+                            <option value="adrenalin">Adrenalin</option>
+                            <option value="testosteron">Testosteron</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-5">
+                        <select id="act1_f2" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-emerald-500">
+                            <option value="">-- Pilih Fungsi Utama --</option>
+                            <option value="f_metabolisme">Mengatur laju metabolisme sel & kecepatan pembakaran energi tubuh</option>
+                            <option value="f_gula">Menurunkan kadar gula darah dengan mengubah glukosa jadi glikogen</option>
+                            <option value="f_stres">Meningkatkan denyut jantung dan tekanan darah saat kondisi darurat/stres</option>
+                            <option value="f_sperma">Merangsang pembentukan sperma dan ciri kelamin pria</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Matching Row 3 -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                    <div class="md:col-span-3 font-bold text-emerald-900 flex items-center gap-2">
+                        <span class="w-6 h-6 bg-emerald-700 text-white rounded-full flex items-center justify-center text-xs">3</span>
+                        Kelenjar Adrenal
+                    </div>
+                    <div class="md:col-span-4">
+                        <select id="act1_h3" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-emerald-500">
+                            <option value="">-- Pilih Hormon --</option>
+                            <option value="growth">Somatotropin (GH)</option>
+                            <option value="insulin">Insulin</option>
+                            <option value="adrenalin">Adrenalin / Epinefrin</option>
+                            <option value="tiroksin">Tiroksin</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-5">
+                        <select id="act1_f3" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-emerald-500">
+                            <option value="">-- Pilih Fungsi Utama --</option>
+                            <option value="f_stres">Meningkatkan denyut jantung, frekuensi napas, dan glukosa darah saat kaget/stres</option>
+                            <option value="f_tumbuh">Merangsang pertumbuhan tulang dan perpanjangan sel tubuh</option>
+                            <option value="f_gula">Menurunkan kadar gula darah dengan mengubah glukosa jadi glikogen</option>
+                            <option value="f_metabolisme">Mengatur laju metabolisme tubuh</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Matching Row 4 -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                    <div class="md:col-span-3 font-bold text-emerald-900 flex items-center gap-2">
+                        <span class="w-6 h-6 bg-emerald-700 text-white rounded-full flex items-center justify-center text-xs">4</span>
+                        Kelenjar Hipofisis (Pituitari)
+                    </div>
+                    <div class="md:col-span-4">
+                        <select id="act1_h4" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-emerald-500">
+                            <option value="">-- Pilih Hormon --</option>
+                            <option value="growth">Hormon Pertumbuhan (GH)</option>
+                            <option value="progesteron">Progesteron</option>
+                            <option value="adrenalin">Adrenalin</option>
+                            <option value="insulin">Insulin</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-5">
+                        <select id="act1_f4" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-emerald-500">
+                            <option value="">-- Pilih Fungsi Utama --</option>
+                            <option value="f_tumbuh">Dikenal sebagai "Master of Glands" mengontrol kelenjar lain & merangsang pertumbuhan</option>
+                            <option value="f_metabolisme">Mengatur pembakaran kalori harian</option>
+                            <option value="f_sperma">Merangsang pembentukan sperma</option>
+                            <option value="f_stres">Memicu respon 'Fight or Flight'</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AKTIVITAS 2: Analisis Kasus & Gangguan Hormon -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-emerald-100 mb-6 card-box">
+            <div class="border-b border-slate-200 pb-3 mb-4 flex justify-between items-center">
+                <div>
+                    <span class="bg-emerald-100 text-emerald-800 font-extrabold text-xs px-2.5 py-1 rounded-md uppercase">Aktivitas 2</span>
+                    <h3 class="text-base font-bold text-slate-800 mt-1">Studi Kasus Kelainan Sistem Hormon</h3>
+                </div>
+                <div id="act2Score" class="text-xs font-bold bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-200">
+                    Skor: - / 30
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Case Study 1 -->
+                <div class="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100 space-y-3">
+                    <div class="flex items-start gap-2">
+                        <span class="bg-emerald-800 text-white text-xs font-bold px-2 py-1 rounded">Kasus A</span>
+                        <p class="text-xs sm:text-sm font-semibold text-slate-800">
+                            Di sebuah klinik kesehatan di Malang, seorang pasien berusia 45 tahun sering mengeluhkan rasa haus yang berlebihan (polidipsia), sering buang air kecil terutama malam hari, dan luka di kakinya sangat lambat sembuh. Hasil tes darah menunjukkan kadar glukosa sewaktu melebihi 250 mg/dL.
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">1. Kelainan/Penyakit yang dialami pasien:</label>
+                            <select id="case1_disease" class="w-full bg-white border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-500">
+                                <option value="">-- Pilih Diagnosis --</option>
+                                <option value="gigantisme">Gigantisme</option>
+                                <option value="diabetes">Diabetes Melitus (Kencing Manis)</option>
+                                <option value="kretinisme">Kretinisme (Kerdil Tiroid)</option>
+                                <option value="akromegali">Gondok</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">2. Kelenjar & Hormon yang bermasalah:</label>
+                            <select id="case1_hormone" class="w-full bg-white border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-500">
+                                <option value="">-- Pilih Kelenjar & Hormon --</option>
+                                <option value="pankreas_insulin">Kelenjar Pankreas - Kekurangan Hormon Insulin</option>
+                                <option value="tiroid_tiroksin">Kelenjar Tiroid - Kekurangan Tiroksin</option>
+                                <option value="hipofisis_gh">Kelenjar Hipofisis - Kelebihan Hormon GH</option>
+                                <option value="adrenal_adrenalin">Kelenjar Adrenal - Kelebihan Adrenalin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="text-xs">
+                        <label class="block font-bold text-slate-700 mb-1">3. Penjelasan Analisis Siswa (Mengapa hal tersebut dapat terjadi?):</label>
+                        <textarea id="case1_explain" rows="2" placeholder="Tuliskan analisis ringkas mengenai peran insulin dalam mengubah gula darah menjadi glikogen..." class="w-full bg-white border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-500"></textarea>
+                    </div>
+                </div>
+
+                <!-- Case Study 2 -->
+                <div class="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100 space-y-3">
+                    <div class="flex items-start gap-2">
+                        <span class="bg-emerald-800 text-white text-xs font-bold px-2 py-1 rounded">Kasus B</span>
+                        <p class="text-xs sm:text-sm font-semibold text-slate-800">
+                            Saat Ahmad sedang menyusuri lorong madrasah, tiba-tiba seekor kucing berlari kencang mengejarnya dari belakang. Seketika jantung Ahmad berdegup sangat cepat, napasnya menjadi memburu, dan ia secara refleks melompat tinggi melewati pagar.
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">1. Hormon yang terpacu diproduksi mendadak:</label>
+                            <select id="case2_hormone" class="w-full bg-white border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-500">
+                                <option value="">-- Pilih Hormon --</option>
+                                <option value="adrenalin">Hormon Adrenalin (Epinefrin)</option>
+                                <option value="estrogen">Hormon Estrogen</option>
+                                <option value="tiroksin">Hormon Tiroksin</option>
+                                <option value="insulim">Hormon Insulin</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">2. Organ target & Mekanisme kerja:</label>
+                            <select id="case2_mechanism" class="w-full bg-white border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-500">
+                                <option value="">-- Pilih Mekanisme --</option>
+                                <option value="fight_or_flight">Jantung & Otot: Meningkatkan denyut jantung & aliran darah ke otot (Fight or Flight)</option>
+                                <option value="pencernaan">Lambung: Mengatur pencernaan Makanan secara cepat</option>
+                                <option value="tulang">Tulang: Mengendapkan kalsium ke jaringan tulang</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AKTIVITAS 3: Evaluasi Pilihan Ganda -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-emerald-100 mb-6 card-box">
+            <div class="border-b border-slate-200 pb-3 mb-4 flex justify-between items-center">
+                <div>
+                    <span class="bg-emerald-100 text-emerald-800 font-extrabold text-xs px-2.5 py-1 rounded-md uppercase">Aktivitas 3</span>
+                    <h3 class="text-base font-bold text-slate-800 mt-1">Evaluasi Pemahaman Pembalajaran (Pilihan Ganda)</h3>
+                </div>
+                <div id="act3Score" class="text-xs font-bold bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-200">
+                    Skor: - / 50
+                </div>
+            </div>
+
+            <div class="space-y-5 text-xs sm:text-sm">
+                <!-- Question 1 -->
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50">
+                    <p class="font-bold text-slate-800 mb-2">1. Mengapa kelenjar Hipofisis disebut sebagai <i>"Master of Glands"</i> (Kelenjar Pengendali)?</p>
+                    <div class="space-y-1.5 text-slate-700 pl-2">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q1" value="A" class="text-emerald-600 focus:ring-emerald-500">
+                            <span>A. Karena ukurannya merupakan yang paling besar di antara seluruh organ tubuh.</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q1" value="B" class="text-emerald-600 focus:ring-emerald-500">
+                            <span>B. Karena menghasilkan hormon yang dapat merangsang kelenjar endokrin lain untuk sekresi.</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q1" value="C" class="text-emerald-600 focus:ring-emerald-500">
+                            <span>C. Karena letaknya berada di puncak jaringan otak manusia.</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q1" value="D" class="text-emerald-600 focus:ring-emerald-500">
+                            <span>D. Karena bekerja langsung di bawah perintah saluran sistem pencernaan.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50">
+                    <p class="font-bold text-slate-800 mb-2">2. Seseorang yang kekurangan yodium dalam pola makan sehari-harinya berisiko mengalami pembengkakan pada kelenjar di area leher. Kelenjar dan hormon yang terdampak adalah...</p>
+                    <div class="space-y-1.5 text-slate-700 pl-2">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q2" value="A" class="text-emerald-600 focus:ring-emerald-500">
+                            <span>A. Kelenjar Pankreas - Hormon Insulin</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q2" value="B" class="text-emerald-600 focus:ring-emerald-500">
+                            <span>B. Kelenjar Tiroid - Hormon Tiroksin</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q2" value="C" class="text-emerald-600 focus:ring-emerald-500">
+                            <span>C. Kelenjar Adrenal - Hormon Adrenalin</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q2" value="D" class="text-emerald-600 focus:ring-emerald-500">
+                            <span>D. Kelenjar Hipofisis - Hormon Oksitosin</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50">
+                    <p class="font-bold text-slate-800 mb-2">3. Pasangan hormon berikut yang bekerja secara antagonis (berlawanan) dalam mengatur kadar glukosa dalam darah manusia adalah...</p>
+                    <div class="space-y-1.5 text-slate-700 pl-2">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q3" value="A" class="text-emerald-600 focus:ring-emerald-500">
+                            <span>A. Estrogen dan Progesteron</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q3" value="B" class="text-emerald-600 focus:ring-emerald-500">
+                            <span>B. Insulin dan Glukagon</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q3" value="C" class="text-emerald-600 focus:ring-emerald-500">
+                            <span>C. Tiroksin dan Kalsitonin</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q3" value="D" class="text-emerald-600 focus:ring-emerald-500">
+                            <span>D. Testosteron dan Adrenalin</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50">
+                    <p class="font-bold text-slate-800 mb-2">4. Perbedaan utama antara cara kerja Sistem Saraf dan Sistem Hormon dalam tubuh manusia adalah...</p>
+                    <div class="space-y-1.5 text-slate-700 pl-2">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q4" value="A" class="text-emerald-600 focus:ring-emerald-500">
+                            <span>A. Saraf bekerja lambat dan berdampak panjang, sedangkan hormon bekerja sangat cepat.</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q4" value="B" class="text-emerald-600 focus:ring-emerald-500">
+                            <span>B. Saraf diantarkan via aliran darah, sedangkan hormon diantarkan via serabut sel saraf.</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q4" value="C" class="text-emerald-600 focus:ring-emerald-500">
+                            <span>C. Saraf merespon rangsangan secara cepat & spesifik, sedangkan hormon merespon lebih lambat & berdampak luas.</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q4" value="D" class="text-emerald-600 focus:ring-emerald-500">
+                            <span>D. Keduanya memiliki kecepatan penghantaran impuls yang persis sama.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 5 -->
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50">
+                    <p class="font-bold text-slate-800 mb-2">5. Seorang remaja pria mengalami perubahan fisik seperti tumbuhnya jakun, suara membesar, dan bidang dada melebar. Perubahan ini dipicu oleh hormon...</p>
+                    <div class="space-y-1.5 text-slate-700 pl-2">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q5" value="A" class="text-emerald-600 focus:ring-emerald-500">
+                            <span>A. Progesteron</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q5" value="B" class="text-emerald-600 focus:ring-emerald-500">
+                            <span>B. Estrogen</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q5" value="C" class="text-emerald-600 focus:ring-emerald-500">
+                            <span>C. Testosteron</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q5" value="D" class="text-emerald-600 focus:ring-emerald-500">
+                            <span>D. Tiroksin</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Refleksi & Kesimpulan Siswa -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-emerald-100 mb-6 card-box">
+            <h3 class="text-base font-bold text-emerald-900 mb-2 flex items-center gap-2">
+                <i class="fas fa-edit text-emerald-600"></i> Refleksi & Kesimpulan Siswa
+            </h3>
+            <div class="space-y-3 text-xs sm:text-sm">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">1. Buatlah kesimpulan ringkas tentang pentingnya menjaga keseimbangan sistem hormon bagi kehidupan sehari-hari:</label>
+                    <textarea id="studentSummary" rows="3" placeholder="Tuliskan kesimpulan yang kamu pelajari dari aktivitas LKPD ini..." class="w-full bg-white border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500"></textarea>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">2. Hal baru atau pertanyaan yang paling menarik yang kamu temukan hari ini:</label>
+                    <input type="text" id="studentReflection" placeholder="Ketik ide/pertanyaan baru..." class="w-full bg-white border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-500">
+                </div>
+            </div>
+        </div>
+
+        <!-- Final Score Summary Box & Teacher Signature Block -->
+        <div class="bg-emerald-900 text-white rounded-2xl p-6 shadow-md mb-6 card-box">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                <div class="md:col-span-8 space-y-2">
+                    <h3 class="text-lg font-extrabold text-amber-400 uppercase tracking-wide">LEMBAR PENILAIAN AKHIR LKPD</h3>
+                    <p class="text-xs text-emerald-100">
+                        Hasil akumulasi pengerjaan tugas interaktif siswa MTsN 1 Kota Malang.
+                    </p>
+                    <div class="grid grid-cols-3 gap-2 pt-2 text-center text-xs">
+                        <div class="bg-emerald-800/80 p-2 rounded-lg border border-emerald-700">
+                            <span class="block text-emerald-300">Aktivitas 1</span>
+                            <span id="summaryAct1" class="font-bold text-sm">0 / 20</span>
+                        </div>
+                        <div class="bg-emerald-800/80 p-2 rounded-lg border border-emerald-700">
+                            <span class="block text-emerald-300">Aktivitas 2</span>
+                            <span id="summaryAct2" class="font-bold text-sm">0 / 30</span>
+                        </div>
+                        <div class="bg-emerald-800/80 p-2 rounded-lg border border-emerald-700">
+                            <span class="block text-emerald-300">Aktivitas 3</span>
+                            <span id="summaryAct3" class="font-bold text-sm">0 / 50</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:col-span-4 text-center md:border-l border-emerald-700 md:pl-6">
+                    <span class="text-xs uppercase tracking-wider text-emerald-300 block font-semibold mb-1">NILAI AKHIR (SKOR 100)</span>
+                    <div id="finalScoreBig" class="text-4xl font-black text-amber-400">0</div>
+                    <p id="gradePredicate" class="text-xs font-semibold text-emerald-200 mt-1">Belum Diperiksa</p>
+                </div>
+            </div>
+
+            <!-- Print Signatures Section (Visible in PDF/Print) -->
+            <div class="mt-8 pt-6 border-t border-emerald-700 grid grid-cols-2 text-center text-xs gap-4">
+                <div>
+                    <p class="mb-12">Mengetahui,<br>Orang Tua / Wali Siswa</p>
+                    <p class="font-bold underline">( ............................................ )</p>
+                </div>
+                <div>
+                    <p class="mb-12">Malang, <span id="printDateSummary">........................</span><br>Guru Mata Pelajaran IPA</p>
+                    <p class="font-bold underline">Mohamad Kholish Widodo, S.Pd., M.Pd.</p>
+                    <p class="text-[10px] text-emerald-200">NIP. Guru Pengampu IPA</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer (No-Print) -->
+    <footer class="no-print bg-slate-900 text-slate-400 text-xs py-4 text-center border-t border-slate-800">
+        <p>© 2026 MTsN 1 Kota Malang • LKPD Interaktif Sistem Hormon Manusia</p>
+        <p class="text-slate-500 mt-1">Disusun oleh: Mohamad Kholish Widodo, S.Pd., M.Pd.</p>
+    </footer>
+
+    <script>
+        // Data information for interactive organs
+        const organData = {
+            hipofisis: {
+                title: "1. Kelenjar Hipofisis (Pituitari)",
+                desc: "Kelenjar berukuran sebesar kacang polong yang terletak di dasar otak. Kelenjar ini dijuluki 'Master of Glands' karena merangsang dan mengontrol kinerja kelenjar hormon lainnya di dalam tubuh.",
+                hormone: "Growth Hormone (GH), TSH, ACTH, FSH, LH, Oksitosin",
+                function: "Mengatur pertumbuhan tubuh, memicu kelenjar lain, dan merangsang reproduksi."
+            },
+            tiroid: {
+                title: "2. Kelenjar Tiroid (Kelenjar Gondok)",
+                desc: "Kelenjar berbentuk menyerupai kupu-kupu yang terletak di bagian depan leher, tepat di bawah jakun.",
+                hormone: "Tiroksin (T4) & Triiodotironin (T3), Kalsitonin",
+                function: "Mengatur laju metabolisme pembakaran kalori tubuh dan keseimbangan kalsium."
+            },
+            adrenal: {
+                title: "3. Kelenjar Adrenal (Anak Ginjal)",
+                desc: "Sepasang kelenjar yang terletak menempel di atas organ ginjal kanan dan kiri.",
+                hormone: "Adrenalin (Epinefrin) & Kortisol",
+                function: "Memicu respon 'Fight or Flight' saat darurat/stres, meningkatkan detak jantung."
+            },
+            pankreas: {
+                title: "4. Kelenjar Pankreas (Pulau Langerhans)",
+                desc: "Kelenjar ganda di rongga perut yang berperan sebagai eksokrin (enzim) dan endokrin (hormon).",
+                hormone: "Insulin & Glukagon",
+                function: "Menjaga kestabilan kadar gula (glukosa) dalam darah."
+            },
+            gonad: {
+                title: "5. Kelenjar Kelamin (Gonad)",
+                desc: "Terdiri dari Testis pada pria dan Ovarium pada wanita.",
+                hormone: "Testosteron (Pria); Estrogen & Progesteron (Wanita)",
+                function: "Mempengaruhi ciri kelamin sekunder dan proses reproduksi sel gamet."
+            }
+        };
+
+        function showOrganInfo(key) {
+            const data = organData[key];
+            if (!data) return;
+
+            document.getElementById('organTitle').innerText = data.title;
+            document.getElementById('organDesc').innerText = data.desc;
+            document.getElementById('organHormone').innerText = data.hormone;
+            document.getElementById('organFunction').innerText = data.function;
+            
+            document.getElementById('organMeta').classList.remove('hidden');
+        }
+
+        // Automatic score calculation logic
+        function calculateAllScores() {
+            let score1 = 0;
+            let score2 = 0;
+            let score3 = 0;
+
+            // --- ACT 1 CHECK (20 pts max) ---
+            const h1 = document.getElementById('act1_h1').value;
+            const f1 = document.getElementById('act1_f1').value;
+            if (h1 === 'tiroksin') score1 += 2.5;
+            if (f1 === 'f_metabolisme') score1 += 2.5;
+
+            const h2 = document.getElementById('act1_h2').value;
+            const f2 = document.getElementById('act1_f2').value;
+            if (h2 === 'insulin') score1 += 2.5;
+            if (f2 === 'f_gula') score1 += 2.5;
+
+            const h3 = document.getElementById('act1_h3').value;
+            const f3 = document.getElementById('act1_f3').value;
+            if (h3 === 'adrenalin') score1 += 2.5;
+            if (f3 === 'f_stres') score1 += 2.5;
+
+            const h4 = document.getElementById('act1_h4').value;
+            const f4 = document.getElementById('act1_f4').value;
+            if (h4 === 'growth') score1 += 2.5;
+            if (f4 === 'f_tumbuh') score1 += 2.5;
+
+            // --- ACT 2 CHECK (30 pts max) ---
+            const c1_d = document.getElementById('case1_disease').value;
+            const c1_h = document.getElementById('case1_hormone').value;
+            const c1_exp = document.getElementById('case1_explain').value.trim();
+            if (c1_d === 'diabetes') score2 += 7;
+            if (c1_h === 'pankreas_insulin') score2 += 8;
+            if (c1_exp.length > 10) score2 += 5; // Essay presence effort score
+
+            const c2_h = document.getElementById('case2_hormone').value;
+            const c2_m = document.getElementById('case2_mechanism').value;
+            if (c2_h === 'adrenalin') score2 += 5;
+            if (c2_m === 'fight_or_flight') score2 += 5;
+
+            // --- ACT 3 CHECK (50 pts max, 10 per question) ---
+            const keyQuiz = { q1: 'B', q2: 'B', q3: 'B', q4: 'C', q5: 'C' };
+            for (let i = 1; i <= 5; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selected && selected.value === keyQuiz[`q${i}`]) {
+                    score3 += 10;
+                }
+            }
+
+            // Update score displays
+            document.getElementById('act1Score').innerText = `Skor: ${score1} / 20`;
+            document.getElementById('act2Score').innerText = `Skor: ${score2} / 30`;
+            document.getElementById('act3Score').innerText = `Skor: ${score3} / 50`;
+
+            document.getElementById('summaryAct1').innerText = `${score1} / 20`;
+            document.getElementById('summaryAct2').innerText = `${score2} / 30`;
+            document.getElementById('summaryAct3').innerText = `${score3} / 50`;
+
+            const totalScore = score1 + score2 + score3;
+            document.getElementById('finalScoreBig').innerText = totalScore;
+
+            // Predicate
+            let pred = "";
+            if (totalScore >= 90) pred = "Sangat Baik (A) - Mahir";
+            else if (totalScore >= 75) pred = "Baik (B) - Tuntas KKM";
+            else if (totalScore >= 60) pred = "Cukup (C) - Perlu Perbaikan";
+            else pred = "Perlu Bimbingan Ulang (D)";
+
+            document.getElementById('gradePredicate').innerText = `Predikat: ${pred}`;
+
+            return totalScore;
+        }
+
+        // Live update date and print parameters
+        function updatePrintSummary() {
+            const dateInput = document.getElementById('taskDate').value;
+            if (dateInput) {
+                const d = new Date(dateInput);
+                const options = { day: 'numeric', month: 'long', year: 'numeric' };
+                document.getElementById('printDateSummary').innerText = d.toLocaleDateString('id-ID', options);
+            } else {
+                const today = new Date();
+                const options = { day: 'numeric', month: 'long', year: 'numeric' };
+                document.getElementById('printDateSummary').innerText = today.toLocaleDateString('id-ID', options);
+            }
+        }
+
+        window.onload = function() {
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('taskDate').value = today;
+            updatePrintSummary();
+
+            // Attach auto-calculate listeners to all inputs and select fields
+            document.querySelectorAll('select, input, textarea').forEach(element => {
+                element.addEventListener('change', calculateAllScores);
+                element.addEventListener('input', calculateAllScores);
+            });
+        };
+    </script>
+</body>
+</html>
